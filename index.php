@@ -20,6 +20,7 @@ function csvToArray($filename, $delimiter = ';') {
 
 function csvSaver($tempArray, $newCsv) {
     $data = implode(PHP_EOL, $tempArray);
+    // Преобразуем кодировку из UTF-8 в Windows-1251
     $data = iconv('UTF-8', 'Windows-1251', $data);
     file_put_contents($newCsv, $data);
 }
@@ -43,9 +44,9 @@ $csvArray = csvToArray($filename);
 $tempArray = [];
 array_push($tempArray, $name . ';' . $groupName .';' .$groupFolderPath .';' .$target);
 for ($i = 1; $i < count($csvArray); $i++) {
-    array_push($tempArray, $csvArray[$i][1] . ';' . $csvArray[$i][0] .';' .$groupFolder.$csvArray[$i][1] . ' - /k/'.';' .$csvArray[$i][2]);
-    array_push($tempArray, $csvArray[$i][1]. ' ' . $key1. ';' . $csvArray[$i][0] .';' .$groupFolder.$csvArray[$i][1]. ' - /k/'.';' .$csvArray[$i][2]);
-    array_push($tempArray, $csvArray[$i][1]. ' ' .$key2. ';' . $csvArray[$i][0] .';' .$groupFolder.$csvArray[$i][1]. ' - /k/'.';' .$csvArray[$i][2]);
+    array_push($tempArray, $csvArray[$i][1] . ';' . $csvArray[$i][0] . ' - /k/'.';' .$groupFolder.$csvArray[$i][1] .';' .$csvArray[$i][2]);
+    array_push($tempArray, $csvArray[$i][1]. ' ' . $key1. ';' . $csvArray[$i][0] . ' - /k/'.';' .$groupFolder.$csvArray[$i][1].';' .$csvArray[$i][2]);
+    array_push($tempArray, $csvArray[$i][1]. ' ' .$key2. ';' . $csvArray[$i][0] . ' - /k/'.';' .$groupFolder.$csvArray[$i][1].';' .$csvArray[$i][2]);
 }
 
 csvSaver($tempArray, $newCsv);
