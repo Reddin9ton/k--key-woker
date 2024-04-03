@@ -9,8 +9,12 @@ function prompt($message) {
 
 function csvToArray($filename, $delimiter = ';') {
     $array = [];
+    $charsToRemove = ['-', ',', '.', ':', '"', '{', '}'];
     if (($handle = fopen($filename, "r")) !== FALSE) {
         while (($data = fgetcsv($handle, 0, $delimiter)) !== FALSE) {
+            foreach ($data as $key => $value) {
+                $data[$key] = str_replace($charsToRemove, '', $value);
+            }
             $array[] = $data;
         }
         fclose($handle);
@@ -20,8 +24,6 @@ function csvToArray($filename, $delimiter = ';') {
 
 function csvSaver($tempArray, $newCsv) {
     $data = implode(PHP_EOL, $tempArray);
-    // Преобразуем кодировку из UTF-8 в Windows-1251
-    $data = iconv('UTF-8', 'Windows-1251', $data);
     file_put_contents($newCsv, $data);
 }
 
@@ -29,9 +31,9 @@ echo "Консольное окошко операций\n";
 
 $start = microtime(true); // Начало измерения времени
 
-$filename = prompt("1 - Введите путь к файлу, который преобразуется в массив: ");
-$groupFolder = prompt("2 - Задайте \$groupFolder: ");
-$newCsv = prompt("3 - Введите название файла для сохранения: ");
+$filename = prompt("1 - Введите путь к итогову файлу меток раздела: ");
+$groupFolder = prompt("2 - Задайте \$groupFolder: - родитель в topvisor: ");
+$newCsv = prompt("3 - Введите название файла для сохранения (пример. file.csv): ");
 $name = 'name';
 $groupName = 'group_name';
 $groupFolderPath = 'group_folder_path';
@@ -44,9 +46,9 @@ $csvArray = csvToArray($filename);
 $tempArray = [];
 array_push($tempArray, $name . ';' . $groupName .';' .$groupFolderPath .';' .$target);
 for ($i = 1; $i < count($csvArray); $i++) {
-    array_push($tempArray, $csvArray[$i][1] . ';' . $csvArray[$i][0] . ' - /k/'.';' .$groupFolder.$csvArray[$i][1] .';' .$csvArray[$i][2]);
-    array_push($tempArray, $csvArray[$i][1]. ' ' . $key1. ';' . $csvArray[$i][0] . ' - /k/'.';' .$groupFolder.$csvArray[$i][1].';' .$csvArray[$i][2]);
-    array_push($tempArray, $csvArray[$i][1]. ' ' .$key2. ';' . $csvArray[$i][0] . ' - /k/'.';' .$groupFolder.$csvArray[$i][1].';' .$csvArray[$i][2]);
+    array_push($tempArray, $csvArray[$i][1] . ';' . $csvArray[$i][1] . ' - /k/'.';' .$groupFolder.$csvArray[$i][0] .';' .$csvArray[$i][2].'/');
+    array_push($tempArray, $csvArray[$i][1]. ' ' . $key1. ';' . $csvArray[$i][1] . ' - /k/'.';' .$groupFolder.$csvArray[$i][0].';' .$csvArray[$i][2].'/');
+    array_push($tempArray, $csvArray[$i][1]. ' ' .$key2. ';' . $csvArray[$i][1] . ' - /k/'.';' .$groupFolder.$csvArray[$i][0].';' .$csvArray[$i][2].'/');
 }
 
 csvSaver($tempArray, $newCsv);
